@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension>
 	<information>
-		<name>Online Screensaver</name>
-		<version>0.4</version>
-		<author>peterson</author>
-		<id>OnlineScreensaver</id>
+		<name>kndl-online-screensaver</name>
+		<version>1.0</version>
+		<author>cryptomilk</author>
+		<id>KndlOnlineScreensaver</id>
 	</information>
 	<menus>
 		<menu type="json" dynamic="true">menu.json</menu>
