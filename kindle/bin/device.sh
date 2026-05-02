@@ -51,12 +51,5 @@ get_device_info () {
 			;;
 	esac
 
-	case "${DEVICE}" in
-		pw1|pw2)
-			SCREENSAVER_BASENAME="bg_medium_ss00.png"
-			;;
-		*)
-			SCREENSAVER_BASENAME="bg_ss00.png"
-			;;
-	esac
+	SCREENSAVER_BASENAME="bg_ss00.png"
 }

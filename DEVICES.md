@@ -12,8 +12,8 @@ selects the correct resolution and screensaver filename.
 | Kindle 8 (8th)   | 2016 | 600 × 800    | 167 | 6"     | bg_ss00.png          |               |
 | Kindle 10 (10th) | 2019 | 600 × 800    | 167 | 6"     | bg_ss00.png          |               |
 | Kindle 11 (11th) | 2022 | 1072 × 1448  | 300 | 6"     | bg_ss00.png          |               |
-| PW1              | 2012 | 758 × 1024   | 212 | 6"     | bg_medium_ss00.png   | B00E,B023     |
-| PW2              | 2013 | 758 × 1024   | 212 | 6"     | bg_medium_ss00.png   | B0D4,90D4     |
+| PW1              | 2012 | 758 × 1024   | 212 | 6"     | bg_ss00.png   | B00E,B023     |
+| PW2              | 2013 | 758 × 1024   | 212 | 6"     | bg_ss00.png   | B0D4,90D4     |
 | PW3              | 2015 | 1072 × 1448  | 300 | 6"     | bg_ss00.png          | G090,B0D5     |
 | PW4              | 2018 | 1072 × 1448  | 300 | 6"     | bg_ss00.png          | B0D6-B0D8     |
 | PW5              | 2021 | 1236 × 1648  | 300 | 6.8"   | bg_ss00.png          | B0CE,B0CF     |
@@ -24,8 +24,7 @@ selects the correct resolution and screensaver filename.
 
 ## Notes
 
-- PW1/PW2 use `bg_medium_ss00.png` as the screensaver filename (verified
-  via the `shuffless` utility); all other devices use `bg_ss00.png`.
+- All devices use `bg_ss00.png` as the screensaver filename.
 - Empty serial prefix cells indicate models not yet tested — auto-detection
   falls back to parsing `eips -i` output for screen resolution.
 - Kindle Scribe (10.2") is out of scope (different form factor).

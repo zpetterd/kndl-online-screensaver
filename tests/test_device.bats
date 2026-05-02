@@ -33,28 +33,28 @@ detect_with_eips() {
 	get_device_info
 }
 
-@test "PW2 serial B0D4 → 758x1024, bg_medium_ss00.png" {
+@test "PW2 serial B0D4 → 758x1024, bg_ss00.png" {
 	detect_with_serial "B0D4XXXXXXXXXXXX"
 	[ "$DEVICE" = "pw2" ]
 	[ "$W" -eq 758 ]
 	[ "$H" -eq 1024 ]
-	[ "$SCREENSAVER_BASENAME" = "bg_medium_ss00.png" ]
+	[ "$SCREENSAVER_BASENAME" = "bg_ss00.png" ]
 }
 
-@test "PW2 serial 90D4 → 758x1024, bg_medium_ss00.png" {
+@test "PW2 serial 90D4 → 758x1024, bg_ss00.png" {
 	detect_with_serial "90D4XXXXXXXXXXXX"
 	[ "$DEVICE" = "pw2" ]
 	[ "$W" -eq 758 ]
 	[ "$H" -eq 1024 ]
-	[ "$SCREENSAVER_BASENAME" = "bg_medium_ss00.png" ]
+	[ "$SCREENSAVER_BASENAME" = "bg_ss00.png" ]
 }
 
-@test "PW1 serial B00E → 758x1024, bg_medium_ss00.png" {
+@test "PW1 serial B00E → 758x1024, bg_ss00.png" {
 	detect_with_serial "B00EXXXXXXXXXXXX"
 	[ "$DEVICE" = "pw1" ]
 	[ "$W" -eq 758 ]
 	[ "$H" -eq 1024 ]
-	[ "$SCREENSAVER_BASENAME" = "bg_medium_ss00.png" ]
+	[ "$SCREENSAVER_BASENAME" = "bg_ss00.png" ]
 }
 
 @test "PW3 serial G090 → 1072x1448, bg_ss00.png" {
