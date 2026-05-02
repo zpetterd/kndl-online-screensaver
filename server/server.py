@@ -8,6 +8,7 @@ Usage:
     python server.py  # defaults to testimage.png in the same directory
 """
 
+import hashlib
 import io
 import os
 import sys
@@ -36,6 +37,17 @@ class ImageHandler(BaseHTTPRequestHandler):
         params = parse_qs(parsed.query)
         w_param = params.get("w")
         h_param = params.get("h")
+
+        # ETag derived from file identity + resize params so we can
+        # short-circuit before any image processing.
+        stat = os.stat(IMAGE_PATH)
+        etag_src = f"{stat.st_mtime}:{stat.st_size}:{w_param}:{h_param}"
+        etag = hashlib.md5(etag_src.encode()).hexdigest()
+
+        if self.headers.get("If-None-Match") == etag:
+            self.send_response(304)
+            self.end_headers()
+            return
 
         try:
             img = Image.open(IMAGE_PATH)
@@ -67,6 +79,7 @@ class ImageHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-Type", "image/png")
         self.send_header("Content-Length", str(len(data)))
+        self.send_header("ETag", etag)
         self.end_headers()
         self.wfile.write(data)
 

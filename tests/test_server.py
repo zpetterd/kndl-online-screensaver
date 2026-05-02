@@ -1,7 +1,7 @@
 """Tests for the kndl-online-screensaver image server."""
 
 import io
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 
 from PIL import Image
@@ -78,3 +78,32 @@ def test_oversized_dimensions_returns_400(test_server):
     with pytest.raises(HTTPError) as exc_info:
         urlopen(f"{test_server}/?w=5000&h=5000")
     assert exc_info.value.code == 400
+
+
+def test_response_includes_etag(test_server):
+    resp = urlopen(f"{test_server}/")
+    etag = resp.headers["ETag"]
+    assert etag is not None
+    assert len(etag) > 0
+
+
+def test_matching_etag_returns_304(test_server):
+    resp = urlopen(f"{test_server}/")
+    etag = resp.headers["ETag"]
+
+    req = Request(f"{test_server}/", headers={"If-None-Match": etag})
+    with pytest.raises(HTTPError) as exc_info:
+        urlopen(req)
+    assert exc_info.value.code == 304
+
+
+def test_mismatched_etag_returns_200(test_server):
+    req = Request(f"{test_server}/", headers={"If-None-Match": "bogus"})
+    resp = urlopen(req)
+    assert resp.status == 200
+
+
+def test_different_resize_params_produce_different_etags(test_server):
+    resp1 = urlopen(f"{test_server}/")
+    resp2 = urlopen(f"{test_server}/?w=600&h=800")
+    assert resp1.headers["ETag"] != resp2.headers["ETag"]
