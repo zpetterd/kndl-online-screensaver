@@ -65,6 +65,11 @@ stub_kindle_commands() {
         return 0
     }
     export -f ping
+
+    gasgauge-info() {
+        echo "42"
+    }
+    export -f gasgauge-info
 }
 
 # Create a mock /proc/usid file in a temp directory.
