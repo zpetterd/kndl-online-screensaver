@@ -59,6 +59,11 @@ LOGGING=0
 LOGFILE=/dev/stderr
 #LOGFILE=/mnt/us/extensions/kndl-online-screensaver/log/kndl-online-screensaver.log
 
+# Whether to append ?w=WIDTH&h=HEIGHT query parameters to IMAGE_URI so the
+# server can resize the image to match this device. Only useful when using
+# a server that supports the resize endpoint. (1=yes, 0=no)
+REQUEST_RESIZE=0
+
 # whether to disable WiFi after the script has finished (if WiFi was off
 # when the script started, it will always turn it off)
 DISABLE_WIFI=0
