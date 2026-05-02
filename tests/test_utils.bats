@@ -55,3 +55,36 @@ teardown() {
 	T2=$(currentTime)
 	[ "${T2}" -ge "${T1}" ]
 }
+
+@test "wait_for_suspend exits after time elapses and calls lipc-wait-event" {
+	CALL_COUNT_FILE="${WORK_DIR}/time_calls"
+	printf '0' > "${CALL_COUNT_FILE}"
+
+	currentTime() {
+		COUNT=$(cat "${CALL_COUNT_FILE}")
+		COUNT=$(( COUNT + 1 ))
+		printf '%s' "${COUNT}" > "${CALL_COUNT_FILE}"
+		case "${COUNT}" in
+			1|2) echo 1000 ;;
+			*) echo 1010 ;;
+		esac
+	}
+
+	set_rtc_wakeup_absolute() {
+		return 0
+	}
+
+	sleep() {
+		:
+	}
+
+	LIPC_CALLS="${WORK_DIR}/lipc_calls"
+	: > "${LIPC_CALLS}"
+	lipc-wait-event() {
+		echo "$*" >> "${LIPC_CALLS}"
+	}
+
+	run wait_for_suspend 5
+	[ "${status}" -eq 0 ]
+	grep -q "com.lab126.powerd" "${LIPC_CALLS}"
+}
