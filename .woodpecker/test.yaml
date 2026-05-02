@@ -1,0 +1,21 @@
+when:
+  - event: pull_request
+  - event: push
+    branch: ${CI_REPO_DEFAULT_BRANCH}
+
+steps:
+  shellcheck:
+    image: koalaman/shellcheck-alpine
+    commands:
+      - shellcheck --severity=style kindle/bin/*.sh install.sh
+
+  bats:
+    image: bats/bats
+    commands:
+      - bats tests/*.bats
+
+  pytest:
+    image: python:3.11-slim
+    commands:
+      - pip install --quiet Pillow pytest
+      - pytest tests/test_server.py -v
