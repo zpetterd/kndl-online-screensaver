@@ -57,7 +57,7 @@ LOGGING=0
 # Where to log to - either /dev/stderr for console output, or an absolute
 # file path (beware that this may grow large over time!)
 LOGFILE=/dev/stderr
-#LOGFILE=/mnt/us/extensions/kndl-online-screensaver/log/kndl-online-screensaver.log
+#LOGFILE=/mnt/us/extensions/onlinescreensaver/log/onlinescreensaver.log
 
 # Whether to append ?w=WIDTH&h=HEIGHT query parameters to IMAGE_URI so the
 # server can resize the image to match this device. Only useful when using

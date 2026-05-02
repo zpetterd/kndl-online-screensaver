@@ -29,7 +29,7 @@ run_install() {
 @test "install copies all extension files" {
 	run_install "${KINDLE_MOUNT}" "http://example.com/image.png" "1" "Y" "N"
 
-	INSTALL_DIR="${KINDLE_MOUNT}/extensions/kndl-online-screensaver"
+	INSTALL_DIR="${KINDLE_MOUNT}/extensions/onlinescreensaver"
 	[ -f "${INSTALL_DIR}/menu.json" ]
 	[ -f "${INSTALL_DIR}/config.xml" ]
 	[ -f "${INSTALL_DIR}/bin/scheduler.sh" ]
@@ -45,7 +45,7 @@ run_install() {
 @test "install sets executable permissions on .sh files" {
 	run_install "${KINDLE_MOUNT}" "http://example.com/image.png" "1" "Y" "N"
 
-	INSTALL_DIR="${KINDLE_MOUNT}/extensions/kndl-online-screensaver"
+	INSTALL_DIR="${KINDLE_MOUNT}/extensions/onlinescreensaver"
 	[ -x "${INSTALL_DIR}/bin/scheduler.sh" ]
 	[ -x "${INSTALL_DIR}/bin/update.sh" ]
 	[ -x "${INSTALL_DIR}/bin/enable.sh" ]
@@ -64,50 +64,64 @@ run_install() {
 @test "config.sh contains IMAGE_URI from prompt" {
 	run_install "${KINDLE_MOUNT}" "http://myserver:5000/" "1" "Y" "N"
 
-	CONFIG="${KINDLE_MOUNT}/extensions/kndl-online-screensaver/bin/config.sh"
+	CONFIG="${KINDLE_MOUNT}/extensions/onlinescreensaver/bin/config.sh"
 	grep -q 'IMAGE_URI="http://myserver:5000/"' "${CONFIG}"
 }
 
 @test "config.sh contains recommended schedule for choice 1" {
 	run_install "${KINDLE_MOUNT}" "http://example.com/img.png" "1" "Y" "N"
 
-	CONFIG="${KINDLE_MOUNT}/extensions/kndl-online-screensaver/bin/config.sh"
+	CONFIG="${KINDLE_MOUNT}/extensions/onlinescreensaver/bin/config.sh"
 	grep -q '00:00-07:00=90 07:00-21:00=10 21:00-24:00=20' "${CONFIG}"
 }
 
 @test "config.sh contains DISABLE_WIFI=1 when Y chosen" {
 	run_install "${KINDLE_MOUNT}" "http://example.com/img.png" "1" "Y" "N"
 
-	CONFIG="${KINDLE_MOUNT}/extensions/kndl-online-screensaver/bin/config.sh"
+	CONFIG="${KINDLE_MOUNT}/extensions/onlinescreensaver/bin/config.sh"
 	grep -q 'DISABLE_WIFI=1' "${CONFIG}"
 }
 
 @test "config.sh contains DISABLE_WIFI=0 when n chosen" {
 	run_install "${KINDLE_MOUNT}" "http://example.com/img.png" "1" "n" "N"
 
-	CONFIG="${KINDLE_MOUNT}/extensions/kndl-online-screensaver/bin/config.sh"
+	CONFIG="${KINDLE_MOUNT}/extensions/onlinescreensaver/bin/config.sh"
 	grep -q 'DISABLE_WIFI=0' "${CONFIG}"
 }
 
 @test "config.sh contains REQUEST_RESIZE=0 when N chosen" {
 	run_install "${KINDLE_MOUNT}" "http://example.com/img.png" "1" "Y" "N"
 
-	CONFIG="${KINDLE_MOUNT}/extensions/kndl-online-screensaver/bin/config.sh"
+	CONFIG="${KINDLE_MOUNT}/extensions/onlinescreensaver/bin/config.sh"
 	grep -q 'REQUEST_RESIZE=0' "${CONFIG}"
 }
 
 @test "config.sh contains REQUEST_RESIZE=1 when y chosen" {
 	run_install "${KINDLE_MOUNT}" "http://example.com/img.png" "1" "Y" "y"
 
-	CONFIG="${KINDLE_MOUNT}/extensions/kndl-online-screensaver/bin/config.sh"
+	CONFIG="${KINDLE_MOUNT}/extensions/onlinescreensaver/bin/config.sh"
 	grep -q 'REQUEST_RESIZE=1' "${CONFIG}"
+}
+
+@test "re-install removes old files and installs cleanly" {
+	# First install
+	run_install "${KINDLE_MOUNT}" "http://example.com/img.png" "1" "Y" "N"
+
+	# Create a stale file that should be cleaned up
+	echo "stale" > "${KINDLE_MOUNT}/extensions/onlinescreensaver/bin/old_script.sh"
+
+	# Re-install (overwrite config)
+	run_install "${KINDLE_MOUNT}" "http://example.com/img.png" "1" "Y" "N" "y"
+
+	[ ! -f "${KINDLE_MOUNT}/extensions/onlinescreensaver/bin/old_script.sh" ]
+	[ -f "${KINDLE_MOUNT}/extensions/onlinescreensaver/bin/update.sh" ]
 }
 
 @test "re-install preserves existing config.sh when user declines overwrite" {
 	# First install
 	run_install "${KINDLE_MOUNT}" "http://first.example.com/" "1" "Y" "N"
 
-	CONFIG="${KINDLE_MOUNT}/extensions/kndl-online-screensaver/bin/config.sh"
+	CONFIG="${KINDLE_MOUNT}/extensions/onlinescreensaver/bin/config.sh"
 	grep -q 'http://first.example.com/' "${CONFIG}"
 
 	# Second install — decline overwrite (answer 'n' to overwrite prompt)

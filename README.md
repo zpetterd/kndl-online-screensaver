@@ -23,14 +23,14 @@ resize support.
 
 3. Follow the prompts (mount path, image URL, schedule, WiFi behavior).
 4. Safely eject the Kindle.
-5. On the Kindle, open KUAL and tap **Kndl Online Screensaver** →
+5. On the Kindle, open KUAL and tap **Online Screensaver** →
    **Enable auto-download**.
 6. The screensaver updates on the next sleep cycle.
 
 ## Configuration
 
 All settings are in `config.sh` on the Kindle at
-`extensions/kndl-online-screensaver/bin/config.sh`.
+`extensions/onlinescreensaver/bin/config.sh`.
 
 | Variable          | Default                                      | Description |
 |-------------------|----------------------------------------------|-------------|

@@ -9,7 +9,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-EXTENSION_NAME="kndl-online-screensaver"
+EXTENSION_NAME="onlinescreensaver"
 
 ##############################################################################
 # Helpers
@@ -149,16 +149,23 @@ INSTALL_DIR="${KINDLE_MOUNT}/extensions/${EXTENSION_NAME}"
 echo ""
 echo "Installing to ${INSTALL_DIR}/ ..."
 
-# Check for existing config.sh
+# Check for existing config.sh before cleaning
+SAVED_CONFIG=""
 if [ -f "${INSTALL_DIR}/bin/config.sh" ]; then
 	printf '\n  Existing config.sh found. Overwrite? [y/N]: '
 	read -r OVERWRITE_CHOICE
 	case "${OVERWRITE_CHOICE}" in
-		[yY]*) OVERWRITE_CONFIG=1 ;;
-		*)     OVERWRITE_CONFIG=0 ;;
+		[yY]*) ;;
+		*)
+			SAVED_CONFIG="$(cat "${INSTALL_DIR}/bin/config.sh")"
+			;;
 	esac
-else
-	OVERWRITE_CONFIG=1
+fi
+
+# Clean install — remove old files first
+if [ -d "${INSTALL_DIR}" ]; then
+	rm -rf "${INSTALL_DIR}"
+	check_mark "Removed old ${EXTENSION_NAME} directory"
 fi
 
 # Copy extension files
@@ -184,8 +191,11 @@ if [ ! -d "${KINDLE_MOUNT}/linkss/screensavers" ]; then
 	check_mark "Created screensaver directory (linkss/screensavers/)"
 fi
 
-# Generate config.sh from template
-if [ "${OVERWRITE_CONFIG}" -eq 1 ]; then
+# Generate or restore config.sh
+if [ -n "${SAVED_CONFIG}" ]; then
+	printf '%s\n' "${SAVED_CONFIG}" > "${INSTALL_DIR}/bin/config.sh"
+	echo "  - Restored existing config.sh"
+else
 	sed \
 		-e "s|@@IMAGE_URI@@|${IMAGE_URI}|g" \
 		-e "s|@@SCHEDULE@@|${SCHEDULE}|g" \
@@ -194,8 +204,6 @@ if [ "${OVERWRITE_CONFIG}" -eq 1 ]; then
 		"${SCRIPT_DIR}/kindle/bin/config.sh.template" \
 		> "${INSTALL_DIR}/bin/config.sh"
 	check_mark "Wrote config.sh with your settings"
-else
-	echo "  - Kept existing config.sh"
 fi
 
 echo ""
