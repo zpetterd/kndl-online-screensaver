@@ -40,8 +40,10 @@ get_device_info () {
 			DEVICE="kt"   ; W=600  ; H=800  ;;
 		*)
 			# Fallback: parse eips output for resolution
-			W=$(eips -i 2>&1 | grep -o 'xres=[0-9]*' | cut -d= -f2)
-			H=$(eips -i 2>&1 | grep -o 'yres=[0-9]*' | cut -d= -f2)
+			_dims=$(eips -i 2>&1 | sed -n 's/.*xres=\([0-9]*\).*yres=\([0-9]*\).*/\1 \2/p')
+			read -r W H << EOF
+${_dims}
+EOF
 			DEVICE="unknown"
 
 			if [ -z "${W}" ] || [ -z "${H}" ]; then
