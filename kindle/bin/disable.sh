@@ -1,25 +1,23 @@
 #!/bin/sh
 
-# change to directory of this script
-cd "$(dirname "$0")"
+cd "$(dirname "$0")" || exit 1
 
-# load configuration
 if [ -e "config.sh" ]; then
-	source ./config.sh
+	# shellcheck disable=SC1091
+	. ./config.sh
 fi
 
-# load utils
 if [ -e "utils.sh" ]; then
-	source ./utils.sh
+	# shellcheck disable=SC1091
+	. ./utils.sh
 else
-	echo "Could not find utils.sh in `pwd`"
-	exit
+	echo "Could not find utils.sh in $(pwd)"
+	exit 1
 fi
 
-# forever and ever, try to update the screensaver
 logger "Disabling online screensaver auto-update"
 
-stop onlinescreensaver || true      
+stop onlinescreensaver || true
 
 mntroot rw
 rm /etc/upstart/onlinescreensaver.conf
