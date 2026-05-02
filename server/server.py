@@ -17,15 +17,15 @@ import sys
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 
-from PIL import Image
+from PIL import Image  # type: ignore[import-untyped]
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-IMAGE_PATH = os.environ.get("IMAGE_PATH", os.path.join(SCRIPT_DIR, "testimage.png"))
-PORT = int(os.environ.get("PORT", "5000"))
+SCRIPT_DIR: str = os.path.dirname(os.path.abspath(__file__))
+IMAGE_PATH: str = os.environ.get("IMAGE_PATH", os.path.join(SCRIPT_DIR, "testimage.png"))
+PORT: int = int(os.environ.get("PORT", "5000"))
 
 
 class ImageHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
+    def do_GET(self) -> None:
         parsed = urlparse(self.path)
 
         if parsed.path != "/":
@@ -85,11 +85,11 @@ class ImageHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
-    def log_message(self, format, *args):
+    def log_message(self, format: str, *args: object) -> None:
         sys.stderr.write("%s - - %s\n" % (self.address_string(), format % args))
 
 
-def _resize_and_convert(img, w, h):
+def _resize_and_convert(img: Image.Image, w: int, h: int) -> Image.Image:
     """Resize image to w x h, maintaining aspect ratio with white padding."""
     img = img.convert("L")
 
@@ -103,7 +103,7 @@ def _resize_and_convert(img, w, h):
         new_h = h
         new_w = round(h * img_ratio)
 
-    img = img.resize((new_w, new_h), Image.LANCZOS)
+    img = img.resize((new_w, new_h), Image.LANCZOS)  # ty: ignore[unresolved-attribute]
 
     canvas = Image.new("L", (w, h), 255)
     offset_x = (w - new_w) // 2
@@ -113,7 +113,7 @@ def _resize_and_convert(img, w, h):
     return canvas
 
 
-def main():
+def main() -> None:
     global IMAGE_PATH, PORT
 
     parser = argparse.ArgumentParser(
