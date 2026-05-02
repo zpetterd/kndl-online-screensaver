@@ -12,7 +12,8 @@
 #
 ##############################################################################
 
-cd "$(dirname "$0")" || exit 1
+SCRIPT_DIR=$(dirname "$0")
+cd "${SCRIPT_DIR}" || exit 1
 
 if [ -e "config.sh" ]; then
 	# shellcheck disable=SC1091
@@ -27,7 +28,7 @@ if [ -e "utils.sh" ]; then
 	# shellcheck disable=SC1091
 	. ./utils.sh
 else
-	echo "Could not find utils.sh in $(pwd)"
+	echo "Could not find utils.sh in ${SCRIPT_DIR}"
 	exit 1
 fi
 
