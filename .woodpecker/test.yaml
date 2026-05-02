@@ -7,7 +7,7 @@ steps:
   shellcheck:
     image: koalaman/shellcheck-alpine
     commands:
-      - shellcheck --severity=style kindle/bin/*.sh install.sh
+      - shellcheck --shell=sh --severity=style kindle/bin/*.sh install.sh
 
   bats:
     image: bats/bats
@@ -15,7 +15,7 @@ steps:
       - bats tests/*.bats
 
   pytest:
-    image: python:3.11-slim
+    image: python:3.14-slim
     commands:
       - pip install --quiet Pillow pytest
       - pytest tests/test_server.py -v
