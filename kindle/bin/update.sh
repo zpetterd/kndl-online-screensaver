@@ -77,7 +77,16 @@ done
 if [ 1 -eq "${CONNECTED}" ]; then
 	logger "Network up, downloading image"
 
-	WGET_OUTPUT=$(wget --no-check-certificate -q "${IMAGE_URI}" -O "${TMPFILE}" 2>&1)
+	# Append device resolution as query parameters if W and H are set
+	FETCH_URI="${IMAGE_URI}"
+	if [ -n "${W}" ] && [ -n "${H}" ]; then
+		case "${FETCH_URI}" in
+			*"?"*) FETCH_URI="${FETCH_URI}&w=${W}&h=${H}" ;;
+			*)     FETCH_URI="${FETCH_URI}?w=${W}&h=${H}" ;;
+		esac
+	fi
+
+	WGET_OUTPUT=$(wget --no-check-certificate -q "${FETCH_URI}" -O "${TMPFILE}" 2>&1)
 	WGET_EXIT_CODE=$?
 
 	if [ "${WGET_EXIT_CODE}" -eq 0 ]; then
