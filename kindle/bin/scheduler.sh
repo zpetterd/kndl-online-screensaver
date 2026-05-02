@@ -72,7 +72,9 @@ EOF
 ##############################################################################
 
 get_time_to_next_update () {
-	CURRENTMINUTE=$(( 60 * $(date +%-H) + $(date +%-M) ))
+	_HM=$(date +'%H %M')
+	_H=${_HM% *}; _M=${_HM#* }
+	CURRENTMINUTE=$(( ${_H#0} * 60 + ${_M#0} ))
 	NEXTUPDATE=-1
 
 	for schedule in ${SCHEDULE}; do

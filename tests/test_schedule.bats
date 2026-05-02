@@ -91,12 +91,7 @@ teardown() {
 }
 
 @test "get_time_to_next_update at midnight computes minute 0" {
-	date() {
-		case "$1" in
-			+%-H) echo "0" ;;
-			+%-M) echo "0" ;;
-		esac
-	}
+	date() { echo "00 00"; }
 	export -f date
 
 	SCHEDULE="00:00-24:00=60"
