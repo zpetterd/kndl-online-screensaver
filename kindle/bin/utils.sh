@@ -10,7 +10,7 @@ logger () {
 	MSG=${1}
 
 	# do nothing if logging is not enabled
-	if [ "x1" != "x${LOGGING}" ]; then
+	if [ "1" != "${LOGGING}" ]; then
 		return
 	fi
 
