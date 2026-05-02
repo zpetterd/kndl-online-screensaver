@@ -114,6 +114,22 @@ detect_with_eips() {
 	[ "$SCREENSAVER_BASENAME" = "bg_ss00.png" ]
 }
 
+@test "eips fallback parses multi-line output" {
+	MOCK_PROC_DIR="$(mktemp -d)"
+
+	eips() {
+		printf '%s\n' "eips 2.0" "xres=1264 yres=1680"
+	}
+	export -f eips
+
+	eval "$(sed "s|/proc/usid|$MOCK_PROC_DIR/usid|g" "$BATS_TEST_DIRNAME/../kindle/bin/device.sh")"
+	get_device_info
+
+	[ "$DEVICE" = "unknown" ]
+	[ "$W" -eq 1264 ]
+	[ "$H" -eq 1680 ]
+}
+
 @test "No usid and no eips defaults to 758x1024" {
 	MOCK_PROC_DIR="$(mktemp -d)"
 
