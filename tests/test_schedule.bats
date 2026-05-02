@@ -90,6 +90,24 @@ teardown() {
 	[ "${RESULT}" -le 1 ]
 }
 
+@test "get_time_to_next_update at midnight computes minute 0" {
+	date() {
+		case "$1" in
+			+%-H) echo "0" ;;
+			+%-M) echo "0" ;;
+		esac
+	}
+	export -f date
+
+	SCHEDULE="00:00-24:00=60"
+	DEFAULTINTERVAL=300
+	extend_schedule
+
+	RESULT=$(get_time_to_next_update)
+	[ "${RESULT}" -ge 0 ]
+	[ "${RESULT}" -le 60 ]
+}
+
 @test "schedule parsing strips leading zeros" {
 	# The sed expression should convert 08 to 8 to avoid octal interpretation
 	SCHEDULE="08:05-09:30=15"
