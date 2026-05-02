@@ -42,6 +42,9 @@ check_mark() {
 print_header
 
 DEFAULT_MOUNT="/media/kindle"
+if [ -d "/run/media/${USER}/Kindle" ]; then
+	DEFAULT_MOUNT="/run/media/${USER}/Kindle"
+fi
 printf 'Kindle mount path [%s]: ' "${DEFAULT_MOUNT}"
 read -r KINDLE_MOUNT
 KINDLE_MOUNT="${KINDLE_MOUNT:-${DEFAULT_MOUNT}}"
@@ -78,7 +81,7 @@ fi
 # 2. Prompt for image URL
 
 echo ""
-printf 'Image URL (the server that serves your screensaver PNG):\n  > '
+printf 'Image URL (e.g. http://192.168.1.10:5000):\n  > '
 read -r IMAGE_URI
 if [ -z "${IMAGE_URI}" ]; then
 	die "Image URL cannot be empty."
