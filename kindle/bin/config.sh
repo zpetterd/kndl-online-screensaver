@@ -49,7 +49,7 @@ fi
 SCREENSAVERFOLDER=/mnt/us/linkss/screensavers/
 
 # Screensaver filename — auto-detected from device model, override if needed.
-SCREENSAVERFILE=$SCREENSAVERFOLDER/${SCREENSAVER_BASENAME:-bg_ss00.png}
+SCREENSAVERFILE=${SCREENSAVERFOLDER}/${SCREENSAVER_BASENAME:-bg_ss00.png}
 
 # Whether to create log output (1) or not (0).
 LOGGING=0
