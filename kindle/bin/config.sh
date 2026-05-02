@@ -37,13 +37,19 @@ SCHEDULE="00:00-07:00=90 07:00-21:00=10 21:00-24:00=20"
 # your Kindle's screen (e.g. 600x800 or 758x1024) and really must be PNG.
 IMAGE_URI="http://enter.the.domain/here/and/the/path/to/the/image.png"
 
+# Auto-detect device model, screen resolution, and screensaver filename.
+# These can be overridden below if auto-detection fails.
+if [ -e "device.sh" ]; then
+	# shellcheck disable=SC1091
+	. ./device.sh
+	get_device_info
+fi
+
 # folder that holds the screensavers
 SCREENSAVERFOLDER=/mnt/us/linkss/screensavers/
 
-# In which file to store the downloaded image. Make sure this is a valid
-# screensaver file. E.g. check the current screensaver folder to see what
-# the first filename is, then just use this. THIS FILE WILL BE OVERWRITTEN!
-SCREENSAVERFILE=$SCREENSAVERFOLDER/bg_ss00.png
+# Screensaver filename — auto-detected from device model, override if needed.
+SCREENSAVERFILE=$SCREENSAVERFOLDER/${SCREENSAVER_BASENAME:-bg_ss00.png}
 
 # Whether to create log output (1) or not (0).
 LOGGING=0

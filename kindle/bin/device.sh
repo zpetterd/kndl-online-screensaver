@@ -15,7 +15,7 @@ get_device_info () {
 		SERIAL_PREFIX=$(cut -c1-4 /proc/usid 2>/dev/null)
 	fi
 
-	case "$SERIAL_PREFIX" in
+	case "${SERIAL_PREFIX}" in
 		B004|B005|B024)
 			DEVICE="kt2"  ; W=600  ; H=800  ;;
 		B00E|B023)
@@ -44,14 +44,14 @@ get_device_info () {
 			H=$(eips -i 2>&1 | grep -o 'yres=[0-9]*' | cut -d= -f2)
 			DEVICE="unknown"
 
-			if [ -z "$W" ] || [ -z "$H" ]; then
+			if [ -z "${W}" ] || [ -z "${H}" ]; then
 				W=758
 				H=1024
 			fi
 			;;
 	esac
 
-	case "$DEVICE" in
+	case "${DEVICE}" in
 		pw1|pw2)
 			SCREENSAVER_BASENAME="bg_medium_ss00.png"
 			;;
