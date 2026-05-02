@@ -76,13 +76,14 @@ wait_for_suspend () {
 		sleep 1
 
 		# Wait for the wakeup event or timeout
-		ENDTIME=$(( $(currentTime) + WAIT_SECONDS ))
-		while [ "$(currentTime)" -lt "${ENDTIME}" ]; do
-			lipc-wait-event -s $(( ENDTIME - $(currentTime) )) com.lab126.powerd resuming,wakeupFromSuspend 2>/dev/null || break
-
-			if [ "$(currentTime)" -ge "${ENDTIME}" ]; then
+		_NOW=$(currentTime)
+		ENDTIME=$(( _NOW + WAIT_SECONDS ))
+		while true; do
+			_NOW=$(currentTime)
+			if [ "${_NOW}" -ge "${ENDTIME}" ]; then
 				break
 			fi
+			lipc-wait-event -s $(( ENDTIME - _NOW )) com.lab126.powerd resuming,wakeupFromSuspend 2>/dev/null || break
 		done
 
 		logger "Wait completed, device should be awake"
