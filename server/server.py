@@ -4,10 +4,12 @@ Serves a PNG image, optionally resized to match the requesting
 device's screen resolution via ?w=WIDTH&h=HEIGHT query parameters.
 
 Usage:
+    python server.py --image /path/to/image.png
     IMAGE_PATH=/path/to/image.png python server.py
     python server.py  # defaults to testimage.png in the same directory
 """
 
+import argparse
 import hashlib
 import io
 import os
@@ -112,6 +114,27 @@ def _resize_and_convert(img, w, h):
 
 
 def main():
+    global IMAGE_PATH, PORT
+
+    parser = argparse.ArgumentParser(
+        description="Serve a PNG image for kndl-online-screensaver.",
+    )
+    parser.add_argument(
+        "--image",
+        default=IMAGE_PATH,
+        help="path to the source image (default: IMAGE_PATH env or testimage.png)",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=PORT,
+        help="port to listen on (default: PORT env or 5000)",
+    )
+    args = parser.parse_args()
+
+    IMAGE_PATH = args.image
+    PORT = args.port
+
     print(f"Serving {IMAGE_PATH} on port {PORT}")
     server = HTTPServer(("", PORT), ImageHandler)
     try:
