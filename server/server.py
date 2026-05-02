@@ -40,6 +40,17 @@ class ImageHandler(BaseHTTPRequestHandler):
         w_param = params.get("w")
         h_param = params.get("h")
 
+        battery_param = params.get("batteryLevel")
+        charging_param = params.get("isCharging")
+        if battery_param:
+            level = battery_param[0]
+            charging = charging_param[0] if charging_param else "unknown"
+            self.log_message(
+                "Battery: level=%s%%, charging=%s",
+                level,
+                "yes" if charging == "1" else "no",
+            )
+
         # ETag derived from file identity + resize params so we can
         # short-circuit before any image processing.
         stat = os.stat(IMAGE_PATH)
