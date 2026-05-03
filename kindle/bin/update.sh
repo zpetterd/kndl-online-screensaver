@@ -35,8 +35,20 @@ if [ 0 -eq "${WIFI_STATUS}" ]; then
 	lipc-set-prop com.lab126.cmd wirelessEnable 1
 	DISABLE_WIFI=1
 
-	logger "Waiting 10 seconds for WiFi to initialize..."
-	sleep 10
+	logger "Waiting for WiFi to connect..."
+	sleep 3
+	WIFI_TRIES=4
+	while [ "${WIFI_TRIES}" -gt 0 ]; do
+		WIFI_STATE=$(lipc-get-prop com.lab126.wifid cmState)
+		logger "WiFi state: ${WIFI_STATE}"
+		if [ "${WIFI_STATE}" = "CONNECTED" ]; then
+			break
+		fi
+		WIFI_TRIES=$((WIFI_TRIES - 1))
+		if [ "${WIFI_TRIES}" -gt 0 ]; then
+			sleep 2
+		fi
+	done
 else
 	logger "WiFi was already enabled"
 fi
