@@ -97,7 +97,7 @@ stub_wget_failure() {
 @test "battery params appended to fetch URL" {
 	stub_wget_success "${WGET_CALLS}"
 
-	run env PATH="${WORK_DIR}/bin:${PATH}" sh "${WORK_DIR}/update.sh"
+	run env PATH="${WORK_DIR}/bin:${PATH}" bash "${WORK_DIR}/update.sh"
 	[ "${status}" -eq 0 ]
 
 	WGET_LINE=$(cat "${WGET_CALLS}")
@@ -116,7 +116,7 @@ stub_wget_failure() {
 
 	stub_wget_success "${WGET_CALLS}"
 
-	run env PATH="${WORK_DIR}/bin:${PATH}" sh "${WORK_DIR}/update.sh"
+	run env PATH="${WORK_DIR}/bin:${PATH}" bash "${WORK_DIR}/update.sh"
 	[ "${status}" -eq 0 ]
 
 	WGET_LINE=$(cat "${WGET_CALLS}")
@@ -129,7 +129,7 @@ stub_wget_failure() {
 
 	stub_wget_success "${WGET_CALLS}"
 
-	run env PATH="${WORK_DIR}/bin:${PATH}" sh "${WORK_DIR}/update.sh"
+	run env PATH="${WORK_DIR}/bin:${PATH}" bash "${WORK_DIR}/update.sh"
 	[ "${status}" -eq 0 ]
 
 	WGET_LINE=$(cat "${WGET_CALLS}")
@@ -140,7 +140,7 @@ stub_wget_failure() {
 @test "no etag header when etag file missing" {
 	stub_wget_success "${WGET_CALLS}"
 
-	run env PATH="${WORK_DIR}/bin:${PATH}" sh "${WORK_DIR}/update.sh"
+	run env PATH="${WORK_DIR}/bin:${PATH}" bash "${WORK_DIR}/update.sh"
 	[ "${status}" -eq 0 ]
 
 	WGET_LINE=$(cat "${WGET_CALLS}")
@@ -153,7 +153,7 @@ stub_wget_failure() {
 
 	stub_wget_304 "${WGET_CALLS}"
 
-	run env PATH="${WORK_DIR}/bin:${PATH}" sh "${WORK_DIR}/update.sh"
+	run env PATH="${WORK_DIR}/bin:${PATH}" bash "${WORK_DIR}/update.sh"
 	[ "${status}" -eq 0 ]
 
 	# Screensaver file should NOT exist (no image was written)
@@ -163,7 +163,7 @@ stub_wget_failure() {
 @test "new etag saved from response headers" {
 	stub_wget_success "${WGET_CALLS}"
 
-	run env PATH="${WORK_DIR}/bin:${PATH}" sh "${WORK_DIR}/update.sh"
+	run env PATH="${WORK_DIR}/bin:${PATH}" bash "${WORK_DIR}/update.sh"
 	[ "${status}" -eq 0 ]
 
 	[ -f /tmp/.online_screensaver_etag ]
@@ -174,7 +174,7 @@ stub_wget_failure() {
 @test "successful download moves image to screensaver path" {
 	stub_wget_success "${WGET_CALLS}"
 
-	run env PATH="${WORK_DIR}/bin:${PATH}" sh "${WORK_DIR}/update.sh"
+	run env PATH="${WORK_DIR}/bin:${PATH}" bash "${WORK_DIR}/update.sh"
 	[ "${status}" -eq 0 ]
 
 	[ -f "${SCREENSAVERFILE}" ]
@@ -183,7 +183,7 @@ stub_wget_failure() {
 @test "wget failure does not update screensaver" {
 	stub_wget_failure "${WGET_CALLS}"
 
-	run env PATH="${WORK_DIR}/bin:${PATH}" sh "${WORK_DIR}/update.sh"
+	run env PATH="${WORK_DIR}/bin:${PATH}" bash "${WORK_DIR}/update.sh"
 
 	[ ! -f "${SCREENSAVERFILE}" ]
 }
