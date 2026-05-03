@@ -53,12 +53,12 @@ logger "Starting network connectivity test with ${NETWORK_TIMEOUT} second timeou
 while [ 0 -eq "${CONNECTED}" ]; do
 	PING_ATTEMPTS=$((PING_ATTEMPTS + 1))
 
-	if /bin/ping -c 1 -w 2 "${TEST_DOMAIN}" > /dev/null 2>&1; then
+	if ping -c 1 -w 2 "${TEST_DOMAIN}" > /dev/null 2>&1; then
 		CONNECTED=1
 		logger "Connected after ${PING_ATTEMPTS} ping attempts"
 	else
 		if [ $((PING_ATTEMPTS % 10)) -eq 0 ]; then
-			PING_RESULT=$(/bin/ping -c 1 -w 2 "${TEST_DOMAIN}" 2>&1)
+			PING_RESULT=$(ping -c 1 -w 2 "${TEST_DOMAIN}" 2>&1)
 			logger "Ping attempt ${PING_ATTEMPTS} to ${TEST_DOMAIN} failed: ${PING_RESULT}"
 
 			CURRENT_WIFI_STATE=$(lipc-get-prop com.lab126.wifid cmState)
