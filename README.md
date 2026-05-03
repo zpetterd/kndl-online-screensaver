@@ -5,6 +5,25 @@ screensaver. Supports multiple Kindle models with automatic device detection,
 battery-efficient scheduling via RTC wakeup, and an optional image server with
 resize support.
 
+Designed to work with
+[hass-eink-dashboard](https://github.com/cryptomilk/hass-eink-dashboard/), a
+Home Assistant custom component that renders e-ink dashboard images as PNG, but
+works with any HTTP endpoint serving a PNG image.
+
+## Features
+
+- **Flexible scheduling** - time-of-day intervals (e.g. frequent during the
+  day, infrequent at night)
+- **Power management** - RTC wakeup, CPU powersave, WiFi on-demand
+- **Efficient WiFi** - polls connection state instead of fixed sleep, connects
+  in ~5 seconds
+- **ETag caching** - skips image download when unchanged (304 Not Modified)
+- **Battery reporting** - sends battery level and charging state to the server
+- **Auto device detection** - identifies Kindle model and screen resolution
+  from serial number
+- **Server-side resize** - optional grayscale conversion and
+  aspect-ratio-preserving resize
+
 ## Requirements
 
 - Jailbroken Kindle running firmware 5.x+
@@ -68,13 +87,17 @@ resizes it to match the requesting device's screen resolution.
 ```sh
 cd server
 pip install Pillow
-IMAGE_PATH=/path/to/your/image.png python server.py
+python server.py --image /path/to/your/image.png
 ```
 
-The server listens on port 5000 (configurable via `PORT` env var):
+| Argument  | Default                   | Description |
+|-----------|---------------------------|-------------|
+| `--image` | `IMAGE_PATH` env or `testimage.png` | Path to the source image |
+| `--port`  | `PORT` env or `5000`      | Port to listen on |
 
-- `GET /` - returns the source image as 8-bit grayscale PNG.
-- `GET /?w=758&h=1024` - returns the image resized to 758×1024.
+- `GET /` - returns the source image as 8-bit grayscale PNG
+- `GET /?w=758&h=1024` - returns the image resized to 758×1024
+- Supports ETag caching (304 Not Modified) to avoid redundant transfers
 
 Set `REQUEST_RESIZE=1` in the Kindle's `config.sh` to have the device
 automatically request the correct resolution.
@@ -107,9 +130,9 @@ This project merges and improves upon two existing projects:
 
 - **Peterson** - original author of the online screensaver concept
   ([MobileRead thread](https://www.mobileread.com/forums/showthread.php?t=236104))
-- **Nico Kuhn / onlinescreensaverPW2** - maintained fork with schedule
+- **Nico Kuhn / [onlinescreensaverPW2](https://github.com/Kuhno92/onlinescreensaverPW2)** - maintained fork with schedule
   support (MIT license)
-- **64bits / Little-Langtale** - power management improvements (RTC
+- **64bits / [Little-Langtale](https://github.com/64bits/Little-Langtale/)** - power management improvements (RTC
   wakeup, CPU powersave, timeout protection, WiFi on-demand)
 - The **MobileRead community** for device testing and feedback
 
