@@ -58,6 +58,7 @@ class ImageHandler(BaseHTTPRequestHandler):
         etag = hashlib.md5(etag_src.encode()).hexdigest()
 
         if self.headers.get("If-None-Match") == etag:
+            self.log_message("ETag hit, not transferring image")
             self.send_response(304)
             self.end_headers()
             return
@@ -89,6 +90,7 @@ class ImageHandler(BaseHTTPRequestHandler):
         img.save(buf, format="PNG")
         data = buf.getvalue()
 
+        self.log_message("Transferring image (%d bytes)", len(data))
         self.send_response(200)
         self.send_header("Content-Type", "image/png")
         self.send_header("Content-Length", str(len(data)))
