@@ -200,11 +200,11 @@ if [ -n "${SAVED_CONFIG}" ]; then
 	echo "  - Restored existing config.sh"
 else
 	sed \
-		-e "s|@@IMAGE_URI@@|${IMAGE_URI}|g" \
-		-e "s|@@SCHEDULE@@|${SCHEDULE}|g" \
-		-e "s|@@DISABLE_WIFI@@|${DISABLE_WIFI}|g" \
-		-e "s|@@REQUEST_RESIZE@@|${REQUEST_RESIZE}|g" \
-		"${SCRIPT_DIR}/kindle/bin/config.sh.template" \
+		-e "s|^IMAGE_URI=.*|IMAGE_URI=\"${IMAGE_URI}\"|" \
+		-e "s|^SCHEDULE=.*|SCHEDULE=\"${SCHEDULE}\"|" \
+		-e "s|^DISABLE_WIFI=.*|DISABLE_WIFI=${DISABLE_WIFI}|" \
+		-e "s|^REQUEST_RESIZE=.*|REQUEST_RESIZE=${REQUEST_RESIZE}|" \
+		"${SCRIPT_DIR}/kindle/bin/config.sh" \
 		> "${INSTALL_DIR}/bin/config.sh"
 	check_mark "Wrote config.sh with your settings"
 fi
