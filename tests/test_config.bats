@@ -36,7 +36,7 @@ source_config() {
 
 @test "SCREENSAVERFOLDER defaults to linkss path" {
 	source_config
-	[ "${SCREENSAVERFOLDER}" = "/mnt/us/linkss/screensavers/" ]
+	[ "${SCREENSAVERFOLDER}" = "/mnt/us/linkss/screensavers" ]
 }
 
 @test "SCREENSAVERFILE includes SCREENSAVERFOLDER" {

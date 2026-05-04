@@ -46,7 +46,7 @@ if [ -e "device.sh" ]; then
 fi
 
 # folder that holds the screensavers
-SCREENSAVERFOLDER=/mnt/us/linkss/screensavers/
+SCREENSAVERFOLDER=/mnt/us/linkss/screensavers
 
 # Screensaver filename — auto-detected from device model, override if needed.
 SCREENSAVERFILE=${SCREENSAVERFOLDER}/${SCREENSAVER_BASENAME:-bg_ss00.png}
