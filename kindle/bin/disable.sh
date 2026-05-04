@@ -20,6 +20,8 @@ logger "Disabling online screensaver auto-update"
 
 stop onlinescreensaver || true
 
+echo 0 > "/sys/class/rtc/rtc${RTC}/wakealarm" 2>/dev/null
+
 mntroot rw
 rm /etc/upstart/onlinescreensaver.conf
 mntroot ro
