@@ -140,16 +140,27 @@ if [ 1 -eq "${CONNECTED}" ]; then
 		fi
 		rm -f "${HEADERS_FILE}"
 
-		mv "${TMPFILE}" "${SCREENSAVERFILE}"
 		logger "Screensaver image updated from ${IMAGE_URI}"
 
 		DEVICE_STATUS=$(lipc-get-prop com.lab126.powerd status)
+		logger "Device status before refresh: ${DEVICE_STATUS}"
 		case "${DEVICE_STATUS}" in
-			*"Ready"*|*"Screen Saver"*)
+			*"Active"*)
+				logger "Device active, skipping screen refresh"
+				;;
+			*)
+				# Draw directly from tmpfs to the framebuffer. No writes to
+				# the FAT32 partition — repeated writes there were corrupting
+				# the FAT cluster chain and breaking the extension directory.
 				logger "Refreshing screen"
-				eips -f -g "${SCREENSAVERFILE}"
+				EIPS_OUTPUT=$(eips -f -g "${TMPFILE}" 2>&1)
+				EIPS_EXIT=$?
+				if [ "${EIPS_EXIT}" -ne 0 ] || [ -n "${EIPS_OUTPUT}" ]; then
+					logger "eips exit=${EIPS_EXIT} output=${EIPS_OUTPUT}"
+				fi
 				;;
 		esac
+		rm -f "${TMPFILE}"
 	else
 		WGET_OUTPUT=$(cat "${HEADERS_FILE}" 2>/dev/null)
 		rm -f "${HEADERS_FILE}"
@@ -165,7 +176,7 @@ if [ 1 -eq "${CONNECTED}" ]; then
 		fi
 
 		if [ "${DONOTRETRY:-0}" -eq 1 ]; then
-			touch "${SCREENSAVERFILE}"
+			touch "${TMPFILE}"
 		fi
 	fi
 else

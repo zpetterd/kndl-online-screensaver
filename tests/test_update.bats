@@ -171,19 +171,30 @@ stub_wget_failure() {
 	[ "${SAVED_ETAG}" = "abc123" ]
 }
 
-@test "successful download moves image to screensaver path" {
+@test "successful download refreshes screen via eips" {
+	EIPS_CALLS="${WORK_DIR}/eips_calls"
+	eips() { echo "$*" >> "${EIPS_CALLS}"; }
+	export -f eips
+	export EIPS_CALLS
+
 	stub_wget_success "${WGET_CALLS}"
 
-	run env PATH="${WORK_DIR}/bin:${PATH}" bash "${WORK_DIR}/update.sh"
+	run env PATH="${WORK_DIR}/bin:${PATH}" EIPS_CALLS="${EIPS_CALLS}" bash "${WORK_DIR}/update.sh"
 	[ "${status}" -eq 0 ]
 
-	[ -f "${SCREENSAVERFILE}" ]
+	[ -f "${EIPS_CALLS}" ]
+	grep -q '\-f \-g' "${EIPS_CALLS}"
 }
 
-@test "wget failure does not update screensaver" {
+@test "wget failure does not refresh screen" {
+	EIPS_CALLS="${WORK_DIR}/eips_calls"
+	eips() { echo "$*" >> "${EIPS_CALLS}"; }
+	export -f eips
+	export EIPS_CALLS
+
 	stub_wget_failure "${WGET_CALLS}"
 
-	run env PATH="${WORK_DIR}/bin:${PATH}" bash "${WORK_DIR}/update.sh"
+	run env PATH="${WORK_DIR}/bin:${PATH}" EIPS_CALLS="${EIPS_CALLS}" bash "${WORK_DIR}/update.sh"
 
-	[ ! -f "${SCREENSAVERFILE}" ]
+	[ ! -f "${EIPS_CALLS}" ]
 }
