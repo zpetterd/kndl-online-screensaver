@@ -78,7 +78,25 @@ else
 fi
 
 ##############################################################################
-# 2. Prompt for image URL
+# 2. Check for existing config.sh
+
+INSTALL_DIR="${KINDLE_MOUNT}/extensions/${EXTENSION_NAME}"
+SAVED_CONFIG=""
+if [ -f "${INSTALL_DIR}/bin/config.sh" ]; then
+	printf '\n  Existing config.sh found. Overwrite? [y/N]: '
+	read -r OVERWRITE_CHOICE
+	case "${OVERWRITE_CHOICE}" in
+		[yY]*) ;;
+		*)
+			SAVED_CONFIG="$(cat "${INSTALL_DIR}/bin/config.sh")"
+			;;
+	esac
+fi
+
+if [ -z "${SAVED_CONFIG}" ]; then
+
+##############################################################################
+# 3. Prompt for image URL
 
 echo ""
 printf 'Image URL (e.g. http://192.168.1.10:5000):\n  > '
@@ -88,7 +106,7 @@ if [ -z "${IMAGE_URI}" ]; then
 fi
 
 ##############################################################################
-# 3. Prompt for update schedule
+# 4. Prompt for update schedule
 
 echo ""
 echo "Update schedule (how often to fetch a new image):"
@@ -123,7 +141,7 @@ case "${SCHEDULE_CHOICE}" in
 esac
 
 ##############################################################################
-# 4. Prompt for WiFi behavior
+# 5. Prompt for WiFi behavior
 
 echo ""
 printf 'Disable WiFi between updates? [Y/n]: '
@@ -134,7 +152,7 @@ case "${WIFI_CHOICE}" in
 esac
 
 ##############################################################################
-# 5. Prompt for server-side resize
+# 6. Prompt for server-side resize
 
 echo ""
 printf 'Request server-side image resize (requires compatible server)? [y/N]: '
@@ -144,26 +162,13 @@ case "${RESIZE_CHOICE}" in
 	*)     REQUEST_RESIZE=0 ;;
 esac
 
-##############################################################################
-# 6. Install files
+fi # end: if [ -z "${SAVED_CONFIG}" ]
 
-INSTALL_DIR="${KINDLE_MOUNT}/extensions/${EXTENSION_NAME}"
+##############################################################################
+# 7. Install files
 
 echo ""
 echo "Installing to ${INSTALL_DIR}/ ..."
-
-# Check for existing config.sh before cleaning
-SAVED_CONFIG=""
-if [ -f "${INSTALL_DIR}/bin/config.sh" ]; then
-	printf '\n  Existing config.sh found. Overwrite? [y/N]: '
-	read -r OVERWRITE_CHOICE
-	case "${OVERWRITE_CHOICE}" in
-		[yY]*) ;;
-		*)
-			SAVED_CONFIG="$(cat "${INSTALL_DIR}/bin/config.sh")"
-			;;
-	esac
-fi
 
 # Clean install — remove old files first
 if [ -d "${INSTALL_DIR}" ]; then

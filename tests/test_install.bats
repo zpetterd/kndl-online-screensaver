@@ -14,14 +14,18 @@ teardown() {
 run_install() {
 	# Pipe answers to install.sh via stdin
 	# Args: mount_path image_url schedule_choice wifi_choice resize_choice [overwrite_choice]
+	# When overwrite_choice is provided it is sent before the settings prompts.
+	# When overwrite_choice is 'n' (keep config), no settings prompts are sent.
 	{
 		echo "${1}"    # mount path
-		echo "${2}"    # image URL
-		echo "${3}"    # schedule choice
-		echo "${4}"    # wifi choice
-		echo "${5}"    # resize choice
 		if [ -n "${6}" ]; then
-			echo "${6}"  # overwrite config choice
+			echo "${6}"  # overwrite config choice (only when re-installing)
+		fi
+		if [ -z "${6}" ] || [ "${6}" = "y" ] || [ "${6}" = "Y" ]; then
+			echo "${2}"  # image URL
+			echo "${3}"  # schedule choice
+			echo "${4}"  # wifi choice
+			echo "${5}"  # resize choice
 		fi
 	} | sh "${INSTALL_SH}"
 }
