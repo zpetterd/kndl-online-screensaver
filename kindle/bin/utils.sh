@@ -158,7 +158,7 @@ can_suspend () {
 		*"Active"*)
 			return 1
 			;;
-		*"Screen Saver"*|*"Ready"*)
+		*"Screen Saver"*|*"Ready"*|*"Suspended"*)
 			return 0
 			;;
 		*)

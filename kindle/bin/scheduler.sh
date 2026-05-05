@@ -163,7 +163,7 @@ while true; do
 	logger "Device status: ${DEVICE_STATUS}"
 
 	case "${DEVICE_STATUS}" in
-		*"Screen Saver"*|*"Ready"*)
+		*"Screen Saver"*|*"Ready"*|*"Suspended"*)
 			logger "Device idle - performing scheduled update"
 
 			UPDATE_START_TIME=$(currentTime)
