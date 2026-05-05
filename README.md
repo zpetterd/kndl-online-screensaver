@@ -46,6 +46,12 @@ works with any HTTP endpoint serving a PNG image.
    **Enable auto-download**.
 6. The screensaver updates on the next sleep cycle.
 
+## Updating
+
+After copying updated script files to the Kindle, the running service must be
+restarted to pick up the changes. Open KUAL and tap **Online Screensaver** →
+**Restart auto-download**.
+
 ## Configuration
 
 All settings are in `config.sh` on the Kindle at
@@ -55,7 +61,7 @@ All settings are in `config.sh` on the Kindle at
 |-------------------|----------------------------------------------|-------------|
 | `IMAGE_URI`       | *(set during install)*                       | URL to download the screensaver PNG from |
 | `SCHEDULE`        | `00:00-07:00=90 07:00-21:00=10 21:00-24:00=20` | Update schedule (see format below) |
-| `DEFAULTINTERVAL` | `300`                                        | Fallback interval in minutes if no schedule matches |
+| `DEFAULTINTERVAL` | `60`                                         | Fallback interval in minutes if no schedule matches |
 | `DISABLE_WIFI`    | `0`                                          | Turn off WiFi between updates (1=yes) |
 | `REQUEST_RESIZE`  | `0`                                          | Append `?w=W&h=H` to URL for server-side resize (1=yes) |
 | `TEST_DOMAIN`     | `8.8.8.8`                                    | Domain to ping for connectivity check |
