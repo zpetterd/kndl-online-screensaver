@@ -76,7 +76,7 @@ run_install() {
 	run_install "${KINDLE_MOUNT}" "http://example.com/img.png" "1" "Y" "N"
 
 	CONFIG="${KINDLE_MOUNT}/extensions/onlinescreensaver/bin/config.sh"
-	grep -q '00:00-07:00=90 07:00-21:00=10 21:00-24:00=20' "${CONFIG}"
+	grep -q '00:00-07:00=60 07:00-21:00=8 21:00-24:00=15' "${CONFIG}"
 }
 
 @test "config.sh contains DISABLE_WIFI=1 when Y chosen" {

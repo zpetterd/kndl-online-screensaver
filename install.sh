@@ -110,7 +110,7 @@ fi
 
 echo ""
 echo "Update schedule (how often to fetch a new image):"
-echo "  1) Night 90min / Day 10min / Evening 20min  (recommended)"
+echo "  1) Night 60min / Day 8min / Evening 15min  (recommended)"
 echo "  2) Every  5 minutes"
 echo "  3) Every 10 minutes"
 echo "  4) Every 15 minutes"
@@ -122,7 +122,7 @@ printf '  > '
 read -r SCHEDULE_CHOICE
 
 case "${SCHEDULE_CHOICE}" in
-	1|"") SCHEDULE="00:00-07:00=90 07:00-21:00=10 21:00-24:00=20" ;;
+	1|"") SCHEDULE="00:00-07:00=60 07:00-21:00=8 21:00-24:00=15" ;;
 	2) SCHEDULE="00:00-24:00=5" ;;
 	3) SCHEDULE="00:00-24:00=10" ;;
 	4) SCHEDULE="00:00-24:00=15" ;;
