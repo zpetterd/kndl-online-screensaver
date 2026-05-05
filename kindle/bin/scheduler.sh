@@ -127,7 +127,7 @@ do_update_cycle () {
 	sh ./update.sh &
 	UPDATE_PID=$!
 
-	TIMEOUT=300
+	TIMEOUT=90
 	ELAPSED=0
 
 	while [ "${ELAPSED}" -lt "${TIMEOUT}" ]; do
