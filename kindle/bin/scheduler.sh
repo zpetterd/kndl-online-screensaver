@@ -37,6 +37,8 @@ fi
 
 ###############################################################################
 
+flush_log_buffer force
+
 extend_schedule () {
 	SCHEDULE_ONE=""
 	SCHEDULE_TWO=""

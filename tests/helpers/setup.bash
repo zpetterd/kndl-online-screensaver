@@ -39,6 +39,9 @@ stub_kindle_commands() {
             com.lab126.wifid/cmState)
                 echo "CONNECTED"
                 ;;
+            com.lab126.volumd/userstoreIsAvailable)
+                echo "1"
+                ;;
             *)
                 echo ""
                 ;;

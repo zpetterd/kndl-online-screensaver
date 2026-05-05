@@ -4,7 +4,48 @@
 ##############################################################################
 
 ##############################################################################
-# Logs a message to a log file (or to console if argument is /dev/stdout)
+# Checks if userstore (FAT partition) is safe to write to.
+# Returns 1 (false) during USB mass storage mode.
+
+is_userstore_available () {
+	_AVAILABLE=$(lipc-get-prop com.lab126.volumd userstoreIsAvailable 2>/dev/null)
+	[ "${_AVAILABLE}" = "1" ]
+}
+
+##############################################################################
+# Flushes the RAM log buffer to the FAT partition when safe.
+# Pass "force" to bypass the 32KB size threshold.
+
+flush_log_buffer () {
+	_TEMP_LOG="/tmp/onlinescreensaver.log"
+	_FORCE="${1}"
+
+	if [ "1" != "${LOGGING}" ] || [ -z "${LOGFILE}" ]; then
+		return
+	fi
+	case "${LOGFILE}" in
+		stdout|/dev/stdout|/dev/stderr) return ;;
+	esac
+	if [ ! -f "${_TEMP_LOG}" ]; then
+		return
+	fi
+	if ! is_userstore_available; then
+		return
+	fi
+
+	if [ "${_FORCE}" != "force" ]; then
+		_LOG_SIZE=$(stat -c%s "${_TEMP_LOG}" 2>/dev/null || echo "0")
+		if [ "${_LOG_SIZE}" -lt 32768 ]; then
+			return
+		fi
+	fi
+
+	mkdir -p "$(dirname "${LOGFILE}")" 2>/dev/null
+	cat "${_TEMP_LOG}" >> "${LOGFILE}" 2>/dev/null && rm -f "${_TEMP_LOG}" 2>/dev/null
+}
+
+##############################################################################
+# Logs a message. File destinations buffer to RAM and flush to FAT when safe.
 
 logger () {
 	MSG=${1}
@@ -19,7 +60,15 @@ logger () {
 		LOGFILE=stdout
 	fi
 
-	echo "$(date): ${LOG_TAG:+${LOG_TAG}: }${MSG}" >> "${LOGFILE}"
+	case "${LOGFILE}" in
+		stdout|/dev/stdout|/dev/stderr)
+			echo "$(date): ${LOG_TAG:+${LOG_TAG}: }${MSG}" >> "${LOGFILE}"
+			;;
+		*)
+			echo "$(date): ${LOG_TAG:+${LOG_TAG}: }${MSG}" >> "/tmp/onlinescreensaver.log"
+			flush_log_buffer
+			;;
+	esac
 }
 
 ##############################################################################
@@ -161,6 +210,7 @@ set_rtc_wakeup() {
 # Cleanup function for graceful shutdown
 cleanup_and_exit () {
 	logger "Performing cleanup before exit"
+	flush_log_buffer force
 	clear_rtc_wakeup
 	exit 0
 }

@@ -12,12 +12,15 @@ setup() {
 	LOGFILE=/dev/stderr
 	RTC=0
 
+	rm -f /tmp/onlinescreensaver.log
+
 	cd "${WORK_DIR}" || return 1
 	# shellcheck disable=SC1091
 	. ./utils.sh
 }
 
 teardown() {
+	rm -f /tmp/onlinescreensaver.log
 	rm -rf "${WORK_DIR}"
 }
 
@@ -32,6 +35,7 @@ teardown() {
 	LOGGING=1
 	LOGFILE="${WORK_DIR}/test.log"
 	logger "hello world"
+	flush_log_buffer force
 	[ -f "${WORK_DIR}/test.log" ]
 	grep -q "hello world" "${WORK_DIR}/test.log"
 }
@@ -40,6 +44,7 @@ teardown() {
 	LOGGING=1
 	LOGFILE="${WORK_DIR}/test.log"
 	logger "test message"
+	flush_log_buffer force
 	# date output contains a colon (HH:MM:SS)
 	grep -q ":" "${WORK_DIR}/test.log"
 }
@@ -87,4 +92,42 @@ teardown() {
 	run wait_for_suspend 5
 	[ "${status}" -eq 0 ]
 	grep -q "com.lab126.powerd" "${LIPC_CALLS}"
+}
+
+@test "logger buffers to temp file when LOGFILE is a path" {
+	LOGGING=1
+	LOGFILE="${WORK_DIR}/test.log"
+	logger "buffered message"
+	[ -f /tmp/onlinescreensaver.log ]
+	grep -q "buffered message" /tmp/onlinescreensaver.log
+	[ ! -f "${WORK_DIR}/test.log" ]
+}
+
+@test "flush_log_buffer moves buffer to LOGFILE when forced" {
+	LOGGING=1
+	LOGFILE="${WORK_DIR}/test.log"
+	logger "to be flushed"
+	flush_log_buffer force
+	[ -f "${WORK_DIR}/test.log" ]
+	grep -q "to be flushed" "${WORK_DIR}/test.log"
+	[ ! -f /tmp/onlinescreensaver.log ]
+}
+
+@test "flush_log_buffer skips flush when userstore unavailable" {
+	LOGGING=1
+	LOGFILE="${WORK_DIR}/test.log"
+
+	is_userstore_available() { return 1; }
+
+	logger "stuck in buffer"
+	flush_log_buffer force
+	[ ! -f "${WORK_DIR}/test.log" ]
+	grep -q "stuck in buffer" /tmp/onlinescreensaver.log
+}
+
+@test "logger writes directly to stderr without buffering" {
+	LOGGING=1
+	LOGFILE=/dev/stderr
+	logger "direct message"
+	[ ! -f /tmp/onlinescreensaver.log ]
 }
