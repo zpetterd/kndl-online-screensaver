@@ -22,6 +22,9 @@ else
 	exit 1
 fi
 
+MOUNT_OPTS=$(grep ' /mnt/us ' /proc/mounts 2>/dev/null)
+logger "Mount options: ${MOUNT_OPTS}"
+
 if [ -z "${IMAGE_URI}" ]; then
 	logger "No image URL has been set. Please edit config.sh."
 	exit 1
