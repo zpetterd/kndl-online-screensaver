@@ -178,8 +178,8 @@ while true; do
 			wait_for_suspend $(( WAIT_MINUTES * 60 ))
 			;;
 		*"Active"*)
-			logger "Device active, waiting 180 seconds before recheck"
-			wait_for_suspend 180
+			logger "Device active, waiting for screensaver or 180s timeout"
+			lipc-wait-event -s 180 com.lab126.powerd goingToScreenSaver 2>/dev/null
 			;;
 		*)
 			logger "Device in unknown state, waiting 60 seconds before recheck"
