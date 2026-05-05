@@ -191,6 +191,7 @@ cp "${SCRIPT_DIR}/kindle/bin/device.sh" "${INSTALL_DIR}/bin/"
 cp "${SCRIPT_DIR}/kindle/bin/enable.sh" "${INSTALL_DIR}/bin/"
 cp "${SCRIPT_DIR}/kindle/bin/disable.sh" "${INSTALL_DIR}/bin/"
 cp "${SCRIPT_DIR}/kindle/bin/onlinescreensaver.conf" "${INSTALL_DIR}/bin/"
+mkdir -p "${INSTALL_DIR}/log"
 check_mark "Copied extension files"
 
 # Set permissions
