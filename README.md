@@ -60,7 +60,7 @@ All settings are in `config.sh` on the Kindle at
 | Variable          | Default                                      | Description |
 |-------------------|----------------------------------------------|-------------|
 | `IMAGE_URI`       | *(set during install)*                       | URL to download the screensaver PNG from |
-| `SCHEDULE`        | `00:00-07:00=90 07:00-21:00=10 21:00-24:00=20` | Update schedule (see format below) |
+| `SCHEDULE`        | `00:00-07:00=60 07:00-21:00=8 21:00-24:00=15` | Update schedule (see format below) |
 | `DEFAULTINTERVAL` | `60`                                         | Fallback interval in minutes if no schedule matches |
 | `DISABLE_WIFI`    | `0`                                          | Turn off WiFi between updates (1=yes) |
 | `REQUEST_RESIZE`  | `0`                                          | Append `?w=W&h=H` to URL for server-side resize (1=yes) |
@@ -78,11 +78,11 @@ Space-separated list of time ranges with intervals in minutes:
 SCHEDULE="HH:MM-HH:MM=INTERVAL HH:MM-HH:MM=INTERVAL ..."
 ```
 
-Example - update every 90 minutes at night, every 10 minutes during the
-day, every 20 minutes in the evening:
+Example - update every 60 minutes at night, every 8 minutes during the
+day, every 15 minutes in the evening:
 
 ```
-SCHEDULE="00:00-07:00=90 07:00-21:00=10 21:00-24:00=20"
+SCHEDULE="00:00-07:00=60 07:00-21:00=8 21:00-24:00=15"
 ```
 
 ## Image server (optional)
