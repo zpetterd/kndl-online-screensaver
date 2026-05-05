@@ -177,8 +177,12 @@ while true; do
 			logger "Next update in ${WAIT_MINUTES} minutes, sleeping until then"
 			wait_for_suspend $(( WAIT_MINUTES * 60 ))
 			;;
+		*"Active"*)
+			logger "Device active, waiting 180 seconds before recheck"
+			wait_for_suspend 180
+			;;
 		*)
-			logger "Device in other state, waiting 60 seconds before recheck"
+			logger "Device in unknown state, waiting 60 seconds before recheck"
 			wait_for_suspend 60
 			;;
 	esac
