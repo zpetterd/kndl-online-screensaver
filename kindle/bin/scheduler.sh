@@ -12,6 +12,9 @@
 #
 ##############################################################################
 
+# shellcheck disable=SC2034
+LOG_TAG="scheduler"
+
 SCRIPT_DIR=$(dirname "$0")
 cd "${SCRIPT_DIR}" || exit 1
 

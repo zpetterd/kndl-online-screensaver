@@ -19,7 +19,7 @@ logger () {
 		LOGFILE=stdout
 	fi
 
-	echo "$(date): ${MSG}" >> "${LOGFILE}"
+	echo "$(date): ${LOG_TAG:+${LOG_TAG}: }${MSG}" >> "${LOGFILE}"
 }
 
 ##############################################################################

@@ -4,6 +4,9 @@
 #
 # Fetch screensaver image from a configurable URL.
 
+# shellcheck disable=SC2034
+LOG_TAG="update"
+
 SCRIPT_DIR=$(dirname "$0")
 cd "${SCRIPT_DIR}" || exit 1
 
@@ -22,7 +25,8 @@ else
 	exit 1
 fi
 
-MOUNT_OPTS=$(grep ' /mnt/us ' /proc/mounts 2>/dev/null)
+# shellcheck disable=SC2002
+MOUNT_OPTS=$(cat /proc/mounts 2>/dev/null | grep ' /mnt/us ' || true)
 logger "Mount options: ${MOUNT_OPTS}"
 
 if [ -z "${IMAGE_URI}" ]; then
