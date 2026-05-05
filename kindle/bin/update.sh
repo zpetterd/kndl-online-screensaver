@@ -168,7 +168,7 @@ if [ 1 -eq "${CONNECTED}" ]; then
 				;;
 		esac
 
-		if [ "${WRITE_SCREENSAVER:-0}" -eq 1 ]; then
+		if [ "${WRITE_SCREENSAVER:-0}" -eq 1 ] && is_userstore_available; then
 			# Overwrite in place so the FAT cluster chain stays unchanged.
 			# Avoids the truncate+realloc that cp/mv would do.
 			dd if="${TMPFILE}" of="${SCREENSAVERFILE}" conv=notrunc 2>/dev/null
