@@ -19,9 +19,9 @@ source_config() {
 	. ./config.sh
 }
 
-@test "DEFAULTINTERVAL defaults to 300" {
+@test "DEFAULTINTERVAL defaults to 60" {
 	source_config
-	[ "${DEFAULTINTERVAL}" -eq 300 ]
+	[ "${DEFAULTINTERVAL}" -eq 60 ]
 }
 
 @test "SCHEDULE has a value" {

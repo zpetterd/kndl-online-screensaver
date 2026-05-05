@@ -9,7 +9,7 @@
 # update fails, the script is not updating again until INTERVAL minutes have
 # passed again. So chose a good compromise between updating often (to make
 # sure you always have the latest image) and rarely (to not waste battery).
-DEFAULTINTERVAL=300
+DEFAULTINTERVAL=60
 
 # Schedule for updating the screensaver. Use checkschedule.sh to check whether
 # the format is correctly understood.
