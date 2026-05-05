@@ -80,14 +80,19 @@ currentTime () {
 
 ##############################################################################
 # Tells powerd to wake the device in WAKEUP_DELAY seconds via rtcWakeup.
-# Must be called from a readyToSuspend handler — powerd rejects it in
-# any other state with lipcPropErrInvalidState.
-# arguments: $1 - time in seconds from now
+# powerd only accepts this in readyToSuspend state; other states return
+# lipcPropErrInvalidState (logged but harmless).
+# arguments: $1 - time in seconds from now, $2 - reason label for logging
 
 set_rtc_wakeup () {
 	WAKEUP_DELAY=${1}
+	WAKEUP_REASON=${2:-suspend}
 	LIPC_RESULT=$(lipc-set-prop -i com.lab126.powerd rtcWakeup "${WAKEUP_DELAY}" 2>&1); LIPC_RC=$?
-	logger "lipc-set-prop rtcWakeup: rc=${LIPC_RC} out=${LIPC_RESULT:-ok}"
+	if [ "${LIPC_RC}" -eq 0 ]; then
+		logger "RTC wakeup (${WAKEUP_REASON}): ${WAKEUP_DELAY}s"
+	else
+		logger "RTC wakeup (${WAKEUP_REASON}): rejected (${LIPC_RESULT})"
+	fi
 	return "${LIPC_RC}"
 }
 
@@ -102,9 +107,12 @@ wait_for_suspend () {
 	_NOW=$(currentTime)
 	ENDTIME=$(( _NOW + WAIT_SECONDS ))
 
-	# powerd only accepts rtcWakeup in readyToSuspend state — calling it
-	# earlier (e.g. Active) fails with lipcPropErrInvalidState. Wait for
-	# that event, set the alarm in that window, then break on resume.
+	# Event loop: wait for powerd state transitions until ENDTIME.
+	#   readyToSuspend        => set RTC alarm so device wakes for next update
+	#   wakeupFromSuspend     => arm RTC preemptively (best-effort, powerd may
+	#                            reject outside readyToSuspend), then re-enter
+	#                            loop to wait the remaining time
+	#   timeout (no event)    => REMAINING <= 0 at top of loop, exit
 	while true; do
 		_NOW=$(currentTime)
 		REMAINING=$(( ENDTIME - _NOW ))
@@ -118,12 +126,11 @@ wait_for_suspend () {
 		case "${EVENT}" in
 			readyToSuspend*)
 				REMAINING=$(( ENDTIME - $(currentTime) ))
-				logger "Device ready to suspend, setting RTC wakeup for ${REMAINING}s"
-				set_rtc_wakeup "${REMAINING}"
+				set_rtc_wakeup "${REMAINING}" "suspend"
 				;;
 			wakeupFromSuspend*|resuming*)
-				logger "Device resumed, finishing wait"
-				break
+				REMAINING=$(( ENDTIME - $(currentTime) ))
+				set_rtc_wakeup "${REMAINING}" "preemptive"
 				;;
 		esac
 	done
