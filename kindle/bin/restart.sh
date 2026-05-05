@@ -20,3 +20,5 @@ logger "Restarting online screensaver auto-update"
 
 stop onlinescreensaver || true
 start onlinescreensaver
+
+flush_log_buffer force
