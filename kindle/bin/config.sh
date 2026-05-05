@@ -45,19 +45,16 @@ if [ -e "device.sh" ]; then
 	get_device_info
 fi
 
+# Also persist the image to SCREENSAVERFILE on the FAT32 partition so it
+# survives reboots and is shown immediately when entering screensaver mode.
+# Disabled by default
+WRITE_SCREENSAVER=0
+
 # folder that holds the screensavers
 SCREENSAVERFOLDER=/mnt/us/linkss/screensavers
 
 # Screensaver filename — auto-detected from device model, override if needed.
 SCREENSAVERFILE=${SCREENSAVERFOLDER}/${SCREENSAVER_BASENAME:-bg_ss00.png}
-
-# Whether to create log output (1) or not (0).
-LOGGING=0
-
-# Where to log to - either /dev/stderr for console output, or an absolute
-# file path (beware that this may grow large over time!)
-LOGFILE=/dev/stderr
-#LOGFILE=/mnt/us/extensions/onlinescreensaver/log/onlinescreensaver.log
 
 # Whether to append ?w=WIDTH&h=HEIGHT query parameters to IMAGE_URI so the
 # server can resize the image to match this device. Only useful when using
@@ -82,6 +79,14 @@ NETWORK_TIMEOUT=58
 #############################################################################
 # Advanced
 #############################################################################
+
+# Whether to create log output (1) or not (0).
+LOGGING=0
+
+# Where to log to - either /dev/stderr for console output, or an absolute
+# file path (beware that this may grow large over time!)
+LOGFILE=/dev/stderr
+#LOGFILE=/mnt/us/extensions/onlinescreensaver/log/onlinescreensaver.log
 
 # the real-time clock to use (0, 1 or 2)
 RTC=0

@@ -160,6 +160,13 @@ if [ 1 -eq "${CONNECTED}" ]; then
 				fi
 				;;
 		esac
+
+		if [ "${WRITE_SCREENSAVER:-0}" -eq 1 ]; then
+			# Overwrite in place so the FAT cluster chain stays unchanged.
+			# Avoids the truncate+realloc that cp/mv would do.
+			dd if="${TMPFILE}" of="${SCREENSAVERFILE}" conv=notrunc 2>/dev/null
+			sync
+		fi
 		rm -f "${TMPFILE}"
 	else
 		WGET_OUTPUT=$(cat "${HEADERS_FILE}" 2>/dev/null)
