@@ -158,6 +158,8 @@ do_update_cycle () {
 
 extend_schedule
 
+logger "Scheduler started (pid $$)"
+
 while true; do
 	DEVICE_STATUS=$(lipc-get-prop com.lab126.powerd status)
 	logger "Device status: ${DEVICE_STATUS}"
