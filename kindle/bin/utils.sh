@@ -3,6 +3,8 @@
 # Battery-efficient utility functions for Kindle scheduler
 ##############################################################################
 
+DEFAULT_LOG_FLUSH_SIZE=32768
+
 ##############################################################################
 # Checks if userstore (FAT partition) is safe to write to.
 # Returns 1 (false) during USB mass storage mode.
@@ -14,7 +16,7 @@ is_userstore_available () {
 
 ##############################################################################
 # Flushes the RAM log buffer to the FAT partition when safe.
-# Pass "force" to bypass the 32KB size threshold.
+# Pass "force" to bypass the LOG_FLUSH_SIZE threshold.
 
 flush_log_buffer () {
 	_TEMP_LOG="/tmp/onlinescreensaver.log"
@@ -35,7 +37,7 @@ flush_log_buffer () {
 
 	if [ "${_FORCE}" != "force" ]; then
 		_LOG_SIZE=$(stat -c%s "${_TEMP_LOG}" 2>/dev/null || echo "0")
-		if [ "${_LOG_SIZE}" -lt 32768 ]; then
+		if [ "${_LOG_SIZE}" -lt "${LOG_FLUSH_SIZE:-${DEFAULT_LOG_FLUSH_SIZE}}" ]; then
 			return
 		fi
 	fi

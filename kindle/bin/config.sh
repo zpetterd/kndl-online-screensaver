@@ -77,7 +77,7 @@ NETWORK_TIMEOUT=58
 
 
 #############################################################################
-# Advanced
+# ADVANCED
 #############################################################################
 
 # Whether to create log output (1) or not (0).
@@ -87,6 +87,10 @@ LOGGING=0
 # file path (beware that this may grow large over time!)
 LOGFILE=/dev/stderr
 #LOGFILE=/mnt/us/extensions/onlinescreensaver/log/onlinescreensaver.log
+
+# Size in bytes at which the RAM log buffer is flushed to LOGFILE.
+# Set to 0 to flush on every log message.
+#LOG_FLUSH_SIZE=32768
 
 # the real-time clock to use (0, 1 or 2)
 RTC=0
