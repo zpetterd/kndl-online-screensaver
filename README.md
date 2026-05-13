@@ -85,6 +85,9 @@ day, every 15 minutes in the evening:
 SCHEDULE="00:00-07:00=60 07:00-21:00=8 21:00-24:00=15"
 ```
 
+With `SCHEDULE="00:00-07:00=80 07:00-21:00=10 21:00-24:00=20"` battery
+drain is roughly 8-9% per day on a Kindle Paperwhite 2.
+
 ## Image server (optional)
 
 A simple Python server is included that serves a PNG image and optionally
