@@ -148,7 +148,7 @@ esac
 # 5. Prompt for WiFi behavior
 
 echo ""
-printf 'Manage WiFi between updates (off for intervals >30 min, on otherwise)? [Y/n]: '
+printf 'Disable WiFi between updates? [Y/n]: '
 read -r WIFI_CHOICE
 case "${WIFI_CHOICE}" in
 	[nN]*) DISABLE_WIFI=0 ;;
