@@ -62,7 +62,7 @@ All settings are in `config.sh` on the Kindle at
 | `IMAGE_URI`       | *(set during install)*                       | URL to download the screensaver PNG from |
 | `SCHEDULE`        | `00:00-07:00=60 07:00-21:00=8 21:00-24:00=15` | Update schedule (see format below) |
 | `DEFAULTINTERVAL` | `60`                                         | Fallback interval in minutes if no schedule matches |
-| `DISABLE_WIFI`    | `0`                                          | Turn off WiFi between updates (1=yes) |
+| `DISABLE_WIFI`    | `0`                                          | Manage WiFi between updates; keeps radio on for intervals <= 30 min (1=yes) |
 | `REQUEST_RESIZE`  | `0`                                          | Append `?w=W&h=H` to URL for server-side resize (1=yes) |
 | `TEST_DOMAIN`     | `8.8.8.8`                                    | Domain to ping for connectivity check |
 | `NETWORK_TIMEOUT` | `58`                                         | Seconds to wait for internet connection |

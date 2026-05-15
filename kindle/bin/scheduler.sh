@@ -158,6 +158,9 @@ do_update_cycle () {
 
 extend_schedule
 
+WIFI_OFF_THRESHOLD=30
+MANAGING_WIFI=0
+
 logger "Scheduler started (pid $$)"
 
 while true; do
@@ -168,6 +171,11 @@ while true; do
 		*"Screen Saver"*|*"Ready"*|*"Suspended"*)
 			logger "Device idle - performing scheduled update"
 
+			WIFI_BEFORE=$(lipc-get-prop com.lab126.cmd wirelessEnable 2>/dev/null)
+			if [ "${DISABLE_WIFI:-0}" -eq 1 ] || [ "${WIFI_BEFORE}" = "0" ]; then
+				MANAGING_WIFI=1
+			fi
+
 			UPDATE_START_TIME=$(currentTime)
 			do_update_cycle
 			UPDATE_END_TIME=$(currentTime)
@@ -176,6 +184,17 @@ while true; do
 			logger "Update took ${UPDATE_DURATION} seconds"
 
 			WAIT_MINUTES=$(get_time_to_next_update)
+
+			if [ "${MANAGING_WIFI}" -eq 1 ]; then
+				if [ "${WAIT_MINUTES}" -gt "${WIFI_OFF_THRESHOLD}" ]; then
+					logger "Disabling WiFi (next update in ${WAIT_MINUTES} min)"
+					lipc-set-prop com.lab126.cmd wirelessEnable 0
+					MANAGING_WIFI=0
+				else
+					logger "Keeping WiFi on (next update in ${WAIT_MINUTES} min)"
+				fi
+			fi
+
 			logger "Next update in ${WAIT_MINUTES} minutes, sleeping until then"
 			wait_for_suspend $(( WAIT_MINUTES * 60 ))
 			;;

@@ -40,7 +40,6 @@ logger "Initial WiFi status: ${WIFI_STATUS}"
 if [ 0 -eq "${WIFI_STATUS}" ]; then
 	logger "WiFi is off, turning it on now"
 	lipc-set-prop com.lab126.cmd wirelessEnable 1
-	DISABLE_WIFI=1
 
 	logger "Waiting for WiFi to connect..."
 	sleep 3
@@ -197,7 +196,3 @@ else
 	logger "No network connection, skipping image download"
 fi
 
-if [ "${DISABLE_WIFI:-0}" -eq 1 ]; then
-	logger "Disabling WiFi"
-	lipc-set-prop com.lab126.cmd wirelessEnable 0
-fi

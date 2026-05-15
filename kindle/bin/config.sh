@@ -61,8 +61,9 @@ SCREENSAVERFILE=${SCREENSAVERFOLDER}/${SCREENSAVER_BASENAME:-bg_ss00.png}
 # a server that supports the resize endpoint. (1=yes, 0=no)
 REQUEST_RESIZE=0
 
-# whether to disable WiFi after the script has finished (if WiFi was off
-# when the script started, it will always turn it off)
+# Whether to disable WiFi between updates. When enabled, WiFi is kept on
+# if the next update is 30 minutes or less away (radio startup costs more
+# than idle). It is turned off for longer intervals.
 DISABLE_WIFI=0
 
 # Domain to ping to test network connectivity. Default should work, but in
