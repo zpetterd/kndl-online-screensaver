@@ -123,6 +123,8 @@ EOF
 
 do_update_cycle () {
 	logger "Starting update cycle"
+	lipc-set-prop -i com.lab126.powerd deferSuspend 120 2>/dev/null
+	logger "deferSuspend set to 120s"
 
 	sh ./update.sh &
 	UPDATE_PID=$!
@@ -134,6 +136,8 @@ do_update_cycle () {
 		if ! kill -0 "${UPDATE_PID}" 2>/dev/null; then
 			wait "${UPDATE_PID}"
 			UPDATE_RESULT=$?
+			lipc-set-prop -i com.lab126.powerd deferSuspend 0 2>/dev/null
+			logger "deferSuspend cleared"
 			if [ "${UPDATE_RESULT}" -eq 0 ]; then
 				logger "Update completed successfully in ${ELAPSED} seconds"
 			else
@@ -150,6 +154,8 @@ do_update_cycle () {
 	kill "${UPDATE_PID}" 2>/dev/null
 	sleep 2
 	kill -9 "${UPDATE_PID}" 2>/dev/null
+	lipc-set-prop -i com.lab126.powerd deferSuspend 0 2>/dev/null
+	logger "deferSuspend cleared"
 
 	logger "Update cycle finished (timed out)"
 }
