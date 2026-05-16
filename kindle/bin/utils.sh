@@ -89,6 +89,10 @@ currentTime () {
 set_rtc_wakeup () {
 	WAKEUP_DELAY=${1}
 	WAKEUP_REASON=${2:-suspend}
+	if [ "${WAKEUP_DELAY}" -le 0 ]; then
+		logger "RTC wakeup (${WAKEUP_REASON}): skipped (already past)"
+		return 0
+	fi
 	LIPC_RESULT=$(lipc-set-prop -i com.lab126.powerd rtcWakeup "${WAKEUP_DELAY}" 2>&1); LIPC_RC=$?
 	if [ "${LIPC_RC}" -eq 0 ]; then
 		logger "RTC wakeup (${WAKEUP_REASON}): ${WAKEUP_DELAY}s"
