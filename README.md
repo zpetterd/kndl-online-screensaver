@@ -133,6 +133,29 @@ bats tests/*.bats
 tox
 ```
 
+## Debugging
+
+Enable logging in `config.sh`:
+
+```sh
+LOGGING=1
+LOGFILE=/mnt/us/extensions/onlinescreensaver/log/onlinescreensaver.log
+```
+
+Logs are buffered in RAM (`/tmp/onlinescreensaver.log`) and flushed to
+the FAT partition periodically and on clean shutdown. To collect a log:
+
+1. On the Kindle, open KUAL → **Online Screensaver** → **Disable auto-download**
+   (this flushes the buffer to disk)
+2. Connect the Kindle via USB
+3. Copy the log file from `extensions/onlinescreensaver/log/`
+4. Copy any updated scripts, then safely eject
+5. Re-enable auto-download via KUAL
+
+**Important:** always disable auto-download before connecting USB.
+Stopping the service ensures the log is fully flushed and that no
+scripts hold open file handles on the FAT partition.
+
 ## Acknowledgments
 
 This project merges and improves upon two existing projects:
