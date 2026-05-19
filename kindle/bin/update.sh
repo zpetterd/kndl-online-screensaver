@@ -38,26 +38,18 @@ WIFI_STATUS=$(lipc-get-prop com.lab126.cmd wirelessEnable)
 logger "Initial WiFi status: ${WIFI_STATUS}"
 
 if [ 0 -eq "${WIFI_STATUS}" ]; then
-	logger "WiFi is off, turning it on now"
-	lipc-set-prop com.lab126.cmd wirelessEnable 1
 	DISABLE_WIFI=1
+fi
 
-	logger "Waiting for WiFi to connect..."
-	sleep 3
-	WIFI_TRIES=4
-	while [ "${WIFI_TRIES}" -gt 0 ]; do
-		WIFI_STATE=$(lipc-get-prop com.lab126.wifid cmState)
-		logger "WiFi state: ${WIFI_STATE}"
-		if [ "${WIFI_STATE}" = "CONNECTED" ]; then
-			break
-		fi
-		WIFI_TRIES=$((WIFI_TRIES - 1))
-		if [ "${WIFI_TRIES}" -gt 0 ]; then
-			sleep 2
-		fi
-	done
+WIFI_STATE=$(lipc-get-prop com.lab126.wifid cmState)
+if [ "${WIFI_STATE}" != "CONNECTED" ]; then
+	logger "WiFi not connected (state: ${WIFI_STATE}), cycling"
+	lipc-set-prop com.lab126.cmd wirelessEnable 0
+	sleep 2
+	lipc-set-prop com.lab126.cmd wirelessEnable 1
+	wait_for_wifi "Waiting for WiFi to connect..."
 else
-	logger "WiFi was already enabled"
+	logger "WiFi already connected"
 fi
 
 WIFI_CONNECTION=$(lipc-get-prop com.lab126.wifid cmState)

@@ -198,3 +198,62 @@ stub_wget_failure() {
 
 	[ ! -f "${EIPS_CALLS}" ]
 }
+
+@test "WiFi cycled when enabled but stuck in NA state, DISABLE_WIFI not forced" {
+	stub_wget_success "${WGET_CALLS}"
+
+	# cmState returns "NA" on first call, "CONNECTED" on all subsequent calls
+	CMSTATE_COUNTER="${WORK_DIR}/cmstate_counter"
+	printf '0' > "${CMSTATE_COUNTER}"
+	export CMSTATE_COUNTER
+
+	LIPC_SET_CALLS="${WORK_DIR}/lipc_set_calls"
+	: > "${LIPC_SET_CALLS}"
+	export LIPC_SET_CALLS
+
+	lipc-get-prop() {
+		case "$1/$2" in
+			com.lab126.cmd/wirelessEnable)
+				echo "1"
+				;;
+			com.lab126.wifid/cmState)
+				COUNT=$(cat "${CMSTATE_COUNTER}")
+				COUNT=$((COUNT + 1))
+				printf '%s' "${COUNT}" > "${CMSTATE_COUNTER}"
+				if [ "${COUNT}" -eq 1 ]; then
+					echo "NA"
+				else
+					echo "CONNECTED"
+				fi
+				;;
+			com.lab126.powerd/status)
+				echo "Screen Saver"
+				;;
+			com.lab126.powerd/isCharging)
+				echo "0"
+				;;
+			com.lab126.volumd/userstoreIsAvailable)
+				echo "1"
+				;;
+			*)
+				echo ""
+				;;
+		esac
+	}
+	export -f lipc-get-prop
+
+	lipc-set-prop() {
+		echo "$*" >> "${LIPC_SET_CALLS}"
+	}
+	export -f lipc-set-prop
+
+	run env PATH="${WORK_DIR}/bin:${PATH}" bash "${WORK_DIR}/update.sh"
+	[ "${status}" -eq 0 ]
+
+	# WiFi was cycled: disable then enable
+	grep -q "com.lab126.cmd wirelessEnable 0" "${LIPC_SET_CALLS}"
+	grep -q "com.lab126.cmd wirelessEnable 1" "${LIPC_SET_CALLS}"
+
+	# DISABLE_WIFI must stay 0 (WiFi was already on) — no final disable call
+	[ "$(grep -c "wirelessEnable 0" "${LIPC_SET_CALLS}")" -eq 1 ]
+}

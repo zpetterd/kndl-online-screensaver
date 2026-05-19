@@ -74,6 +74,32 @@ logger () {
 }
 
 ##############################################################################
+# Waits for WiFi to reach CONNECTED state, polling up to 4 times.
+# $1 - log message to print before waiting
+# Sets globals: WIFI_TRIES, WIFI_STATE
+
+wait_for_wifi () {
+	logger "$1"
+	sleep 3
+	WIFI_TRIES=4
+	while [ "${WIFI_TRIES}" -gt 0 ]; do
+		WIFI_STATE=$(lipc-get-prop com.lab126.wifid cmState)
+		logger "WiFi state: ${WIFI_STATE}"
+		if [ "${WIFI_STATE}" = "CONNECTED" ]; then
+			break
+		fi
+		WIFI_TRIES=$((WIFI_TRIES - 1))
+		# Skip trailing sleep on last iteration to avoid unnecessary delay
+		if [ "${WIFI_TRIES}" -gt 0 ]; then
+			sleep 2
+		fi
+	done
+	if [ "${WIFI_TRIES}" -eq 0 ]; then
+		logger "WiFi did not connect after retries"
+	fi
+}
+
+##############################################################################
 # Retrieves the current time in seconds
 
 currentTime () {
