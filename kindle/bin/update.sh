@@ -164,6 +164,14 @@ else
 fi
 
 if [ "${DISABLE_WIFI:-0}" -eq 1 ]; then
-	logger "Disabling WiFi"
-	lipc-set-prop com.lab126.cmd wirelessEnable 0
+	# Skip the WiFi kill while charging — radio draw is free on the charger.
+	# isCharging returns 0/1; on failure the var is empty and we fall through
+	# to the old behaviour (WiFi off).
+	IS_CHARGING=$(lipc-get-prop com.lab126.powerd isCharging 2>/dev/null)
+	if [ "${IS_CHARGING}" = "1" ]; then
+		logger "Charging, keeping WiFi on"
+	else
+		logger "Disabling WiFi"
+		lipc-set-prop com.lab126.cmd wirelessEnable 0
+	fi
 fi
