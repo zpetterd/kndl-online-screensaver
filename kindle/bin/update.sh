@@ -107,38 +107,12 @@ if [ 1 -eq "${CONNECTED}" ]; then
 		esac
 	fi
 
-	# Conditional fetch: send If-None-Match so the server can return 304
-	ETAG_FILE="/tmp/.online_screensaver_etag"
-	HEADERS_FILE="/tmp/wget_headers.tmp"
-	ETAG=""
-	if [ -f "${ETAG_FILE}" ]; then
-		read -r ETAG < "${ETAG_FILE}"
-	fi
-
-	if [ -n "${ETAG}" ]; then
-		wget --no-check-certificate -q -S \
-			--header="If-None-Match: ${ETAG}" \
-			-O "${TMPFILE}" "${FETCH_URI}" 2>"${HEADERS_FILE}"
-	else
-		wget --no-check-certificate -q -S \
-			-O "${TMPFILE}" "${FETCH_URI}" 2>"${HEADERS_FILE}"
-	fi
+	ERROR_FILE="/tmp/wget_error.tmp"
+	wget -q -O "${TMPFILE}" "${FETCH_URI}" 2>"${ERROR_FILE}"
 	WGET_EXIT_CODE=$?
 
-	# Extract final HTTP status code from response headers
-	HTTP_CODE=$(grep "HTTP/" "${HEADERS_FILE}" | sed -n '$ s/.* \([0-9][0-9]*\) .*/\1/p')
-
-	if [ "${HTTP_CODE}" = "304" ]; then
-		logger "Image unchanged (304), skipping refresh"
-		rm -f "${TMPFILE}" "${HEADERS_FILE}"
-	elif [ "${WGET_EXIT_CODE}" -eq 0 ]; then
-		# Cache the ETag for the next conditional request
-		NEW_ETAG=$(awk '/ETag:/ { print $2 }' "${HEADERS_FILE}")
-		if [ -n "${NEW_ETAG}" ]; then
-			printf '%s' "${NEW_ETAG}" > "${ETAG_FILE}"
-		fi
-		rm -f "${HEADERS_FILE}"
-
+	if [ "${WGET_EXIT_CODE}" -eq 0 ]; then
+		rm -f "${ERROR_FILE}"
 		logger "Screensaver image updated from ${IMAGE_URI}"
 
 		DEVICE_STATUS=$(lipc-get-prop com.lab126.powerd status)
@@ -168,8 +142,8 @@ if [ 1 -eq "${CONNECTED}" ]; then
 		fi
 		rm -f "${TMPFILE}"
 	else
-		WGET_OUTPUT=$(cat "${HEADERS_FILE}" 2>/dev/null)
-		rm -f "${HEADERS_FILE}"
+		WGET_OUTPUT=$(cat "${ERROR_FILE}" 2>/dev/null)
+		rm -f "${ERROR_FILE}"
 		logger "wget failed with exit code ${WGET_EXIT_CODE} for ${IMAGE_URI}"
 
 		if [ -n "${WGET_OUTPUT}" ]; then
