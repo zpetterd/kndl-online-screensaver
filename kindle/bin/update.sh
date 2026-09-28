@@ -136,8 +136,18 @@ if [ 1 -eq "${CONNECTED}" ]; then
 
 		if [ "${WRITE_SCREENSAVER:-0}" -eq 1 ] && is_userstore_available; then
 			# Overwrite in place so the FAT cluster chain stays unchanged.
-			# Avoids the truncate+realloc that cp/mv would do.
-			dd if="${TMPFILE}" of="${SCREENSAVERFILE}" conv=notrunc 2>/dev/null
+			# BusyBox 1.17.1 dd has no conv=notrunc (it exits with usage), so
+			# pad the download to the on-disk image's size instead: dd then
+			# rewrites the same length and never truncates or extends.
+			_TARGET_SIZE=$(stat -c%s "${SCREENSAVERFILE}" 2>/dev/null || echo 0)
+			if [ "${_TARGET_SIZE}" -gt 0 ]; then
+				_IMG_SIZE=$(stat -c%s "${TMPFILE}")
+				if [ "${_IMG_SIZE}" -lt "${_TARGET_SIZE}" ]; then
+					_PAD=$(( _TARGET_SIZE - _IMG_SIZE ))
+					dd if=/dev/zero bs=${_PAD} count=1 >> "${TMPFILE}" 2>/dev/null
+				fi
+			fi
+			dd if="${TMPFILE}" of="${SCREENSAVERFILE}" 2>/dev/null
 			sync
 		fi
 		rm -f "${TMPFILE}"
